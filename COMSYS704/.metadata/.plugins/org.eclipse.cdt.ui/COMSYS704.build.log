@@ -1,0 +1,12 @@
+10:37:20 **** Incremental Build of configuration Debug for project COMSYS704 ****
+make all 
+arm-none-eabi-size   STM32L476JG-SensorTile_ALLMEMS1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  33048	    496	  22664	  56208	   db90	STM32L476JG-SensorTile_ALLMEMS1.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objcopy -O binary "STM32L476JG-SensorTile_ALLMEMS1.elf" "STM32L476JG-SensorTile_ALLMEMS1.bin"
+ 
+
+10:37:20 Build Finished. 0 errors, 0 warnings. (took 330ms)
+
