@@ -221,22 +221,6 @@ static void startAcc() {
 	//#CS704 - Write SPI commands to initiliase Accelerometer
 
 	// Initialise the Accelerometer in normal power mode
-	// Normal Power mode: Set BOTH CTRL_REG1_A[3] CTRL_REG4_A[3] to 0
-	// enable XYZ
-
-//	uint8_t inData[10];
-
-	// 1 0 0 0 , 0 0 0 1 = 0x81
-	// Write lower 3 bits to 1 (bit 4 of this reg and another enables normal power mode)
-	// Don't care about 4 MSB
-//	inData[0] = 0x07; // 3 LSB enable XYZ
-//	uint8_t reg1_a = 0x07;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, &reg1_a, 1);
-//	uint8_t reg4_a = 0x00; //
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, &reg4_a, 1);
-//
-//	XPRINTF("Initialised Accelerometer: NORMAL power mode \r\n");
-
 	/* Accelerometer Startup Sequence from datasheet.
 	1. Write to CTRL_REG1_A
 	2. Write to CTRL_REG2_A
@@ -251,52 +235,31 @@ static void startAcc() {
 	11. Write to CTRL_REG5_A
 	*/
 	uint8_t seve = 0x57;
-	uint8_t zero = 0x00;
+	uint8_t zero = 0x00; // All registers written to 'zero' are default, and place holders for now.
 	// Writing defaults
 	uint8_t inData[10];
-//	inData[0] = seve;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 1
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 3
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 4
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 5
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG6_A, inData, 1); // 6
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(DATACAPTURE_A, inData, 1); // 7
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(INT1_THS_A, inData, 1); // 8
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(INT1_DURATION_A, inData, 1); // 9
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(INT1_CFG_A, inData, 1); // 10
-//	inData[0] = zero;
-//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 11
-	inData[0] = 0x00;
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2
-	inData[0] = 0x00;
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 2
-	inData[0] = 0x81;
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 2
-	inData[0] = 0x57;
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 2
-
-
-	XPRINTF("Reading CTRL_REG1_A and CTRL_REG4_A values \r\n");
-//	uint8_t temp = 69;
-	BSP_LSM303AGR_ReadReg_Acc(CTRL_REG1_A, inData, 0);
-	XPRINTF("CTRL_REG1_A: Hex = 0x%02x \r\n", inData[0]);
-	BSP_LSM303AGR_ReadReg_Acc(CTRL_REG4_A, inData, 1);
-	XPRINTF("CTRL_REG4_A: Hex = 0x%02x \r\n", inData[0]);
-
-//		XPRINTF("CTRL_REG1_A[%d] = %04x \r\n", i, inData[i]);
-//	}
-
-
+	inData[0] = seve; // Enable XYZ Axis and ODR (Output Data Rate) set to 100 Hz
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 1 - Relevant for ODR and power-mode (ODR is dependent on power mode)
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2 - Relevant for Filters (High-Pass, data filter), and interrupts.
+	inData[0] = zero; // Don't care about this for now. -
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 3 - Relevant for FIFO and interrupts
+	inData[0] = 0x81; // Enable SPI and Block data update set to output new data when MSB and LSB regs are read.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 4 - Relevant for Block data update, self-test, SPI enable,
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 5 - Relevant for FIFO enable, rebooting, latch enable interrupts,
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG6_A, inData, 1); // 6 - Relevant for more interrupts
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(DATACAPTURE_A, inData, 1); // 7 - Relevant for data updates, and overruns/overwrites
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(INT1_THS_A, inData, 1); // 8 - Relevant for interrupt 1 threshold for LSBs
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(INT1_DURATION_A, inData, 1); // 9 - Relevant for minimum Interrupt 2(?) length for an event to be recognised. (Depends on ODR chosen)
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(INT1_CFG_A, inData, 1); // 10 - Relevant for Interrupt 1 configuration (enable axes Up/Down direction and low event recognition)
+	inData[0] = zero; // Don't care about this for now.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 11
 
 }
 
