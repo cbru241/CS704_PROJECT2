@@ -188,15 +188,116 @@ static void InitLSM() {
 	XPRINTF("IAM Mag= %d,%d",inData[0],inData[1]);
 	BSP_LSM303AGR_ReadReg_Acc(0x0F,inData,1);
 	XPRINTF("IAM Acc= %d,%d",inData[0],inData[1]);
+
+
 }
 
 
 static void startMag() {
 	//#CS704 - Write SPI commands to initiliase Magnetometer
+//	// How do I do this lol
+//	uint8_t inData[10];
+//	inData[0] = 0x01;
+//	BSP_LSM303AGR_ReadReg_Mag(0x4F,inData,1);
+//	XPRINTF("IAM Mag= %d,%d",inData[0],inData[1]);
+
 }
+// Order in start up sequence
+#define CTRL_REG1_A 0x20 // 1
+#define CTRL_REG2_A 0x21 // 2
+#define CTRL_REG3_A 0x22 // 3
+#define CTRL_REG4_A 0x23 // 4
+#define CTRL_REG5_A 0x24 // 5 & 11
+#define CTRL_REG6_A 0x25 // 6
+#define DATACAPTURE_A 0x26 // 7
+#define INT1_THS_A 0x32 // 8
+#define INT1_DURATION_A 0x33 // 9
+#define INT1_CFG_A 0x30 // 10
+
+
+#define STATUS_REG_A 0x27
 
 static void startAcc() {
 	//#CS704 - Write SPI commands to initiliase Accelerometer
+
+	// Initialise the Accelerometer in normal power mode
+	// Normal Power mode: Set BOTH CTRL_REG1_A[3] CTRL_REG4_A[3] to 0
+	// enable XYZ
+
+//	uint8_t inData[10];
+
+	// 1 0 0 0 , 0 0 0 1 = 0x81
+	// Write lower 3 bits to 1 (bit 4 of this reg and another enables normal power mode)
+	// Don't care about 4 MSB
+//	inData[0] = 0x07; // 3 LSB enable XYZ
+//	uint8_t reg1_a = 0x07;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, &reg1_a, 1);
+//	uint8_t reg4_a = 0x00; //
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, &reg4_a, 1);
+//
+//	XPRINTF("Initialised Accelerometer: NORMAL power mode \r\n");
+
+	/* Accelerometer Startup Sequence from datasheet.
+	1. Write to CTRL_REG1_A
+	2. Write to CTRL_REG2_A
+	3. Write to CTRL_REG3_A
+	4. Write to CTRL_REG4_A
+	5. Write to CTRL_REG5_A
+	6. Write to CTRL_REG6_A
+	7. Write to REFERENCE/DATACAPTURE_A
+	8. Write to INT1_THS_A
+	9. Write to INT1_DUR_A
+	10. Write to INT1_CFG_A
+	11. Write to CTRL_REG5_A
+	*/
+	uint8_t seve = 0x57;
+	uint8_t zero = 0x00;
+	// Writing defaults
+	uint8_t inData[10];
+//	inData[0] = seve;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 1
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 3
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 4
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 5
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG6_A, inData, 1); // 6
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(DATACAPTURE_A, inData, 1); // 7
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(INT1_THS_A, inData, 1); // 8
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(INT1_DURATION_A, inData, 1); // 9
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(INT1_CFG_A, inData, 1); // 10
+//	inData[0] = zero;
+//	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 11
+	inData[0] = 0x00;
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2
+	inData[0] = 0x00;
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 2
+	inData[0] = 0x81;
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 2
+	inData[0] = 0x57;
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 2
+
+
+	XPRINTF("Reading CTRL_REG1_A and CTRL_REG4_A values \r\n");
+//	uint8_t temp = 69;
+	BSP_LSM303AGR_ReadReg_Acc(CTRL_REG1_A, inData, 0);
+	XPRINTF("CTRL_REG1_A: Hex = 0x%02x \r\n", inData[0]);
+	BSP_LSM303AGR_ReadReg_Acc(CTRL_REG4_A, inData, 1);
+	XPRINTF("CTRL_REG4_A: Hex = 0x%02x \r\n", inData[0]);
+
+//		XPRINTF("CTRL_REG1_A[%d] = %04x \r\n", i, inData[i]);
+//	}
+
+
+
 }
 
 static void readMag() {
@@ -204,23 +305,63 @@ static void readMag() {
 	//#CS704 - Read Magnetometer Data over SPI
 
 	//#CS704 - store sensor values into the variables below
+
+//	uint8_t mag_x;
+
+//	BSP_LSM303AGR_ReadReg_Mag(0x01 ,&mag_data, 1);
+
+
+
+
 	MAG_Value.x=100;
 	MAG_Value.y=200;
 	MAG_Value.z=1000;
-
-//	XPRINTF("MAG=%d,%d,%d\r\n",magx,magy,magz);
+	XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
 }
+
+// Accelerometer Register Macros
+#define OUT_X_L_A 0x28 // Register that holds the 8 LSB
+#define OUT_X_H_A 0x29 // Register that holds the 8 MSB for X axis
+//OUT_X_H_A & OUT_X_L_A
+#define OUT_Y_L_A 0x2A
+#define OUT_Y_H_A 0x2B
+
+#define OUT_Z_L_A 0x2C
+#define OUT_Z_H_A 0x2D
 
 static void readAcc() {
 
 	//#CS704 - Read Accelerometer Data over SPI
+	uint8_t status = 5;
 
-	//#CS704 - store sensor values into the variables below
-	ACC_Value.x=100;
-	ACC_Value.y=200;
-	ACC_Value.z=1000;
 
-//	XPRINTF("ACC=%d,%d,%d\r\n",accx,accy,accz);
+//	BSP_LSM303AGR_ReadReg_Acc(STATUS_REG_A, &status, 1);
+
+
+//	if ((status & (1 << 2)) != 0) {
+		uint8_t x_lsb = 0;
+		uint8_t x_msb = 0;
+		BSP_LSM303AGR_ReadReg_Acc(OUT_X_L_A, &x_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Acc(OUT_X_H_A, &x_msb, 1);
+		uint8_t y_lsb = 0;
+		uint8_t y_msb = 0;
+		BSP_LSM303AGR_ReadReg_Acc(OUT_Y_L_A, &y_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Acc(OUT_Y_H_A, &y_msb, 1);
+		uint8_t z_lsb = 0;
+		uint8_t z_msb = 0;
+		BSP_LSM303AGR_ReadReg_Acc(OUT_Z_L_A, &z_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Acc(OUT_Z_H_A, &z_msb, 1);
+
+		//#CS704 - store sensor values into the variables below
+		ACC_Value.x = (x_msb << 8) | x_lsb;
+		ACC_Value.y = (y_msb << 8) | y_lsb;
+		ACC_Value.z = (z_msb << 8) | z_lsb;
+
+		XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+		XPRINTF("LSB ACC=%d,%d,%d\r\n", x_lsb, y_lsb, z_lsb);
+		XPRINTF("MSB ACC=%d,%d,%d\r\n", x_msb, y_msb, z_msb);
+
+//	}
 }
 
 /**
@@ -262,13 +403,13 @@ int main(void)
   //***************************************************
 
   //#CS704 - use this to set BLE Device Name
-  NodeName[1] = 'A';
-  NodeName[2] = 'B';
-  NodeName[3] = 'C';
-  NodeName[4] = 'D';
-  NodeName[5] = 'E';
-  NodeName[6] = 'F';
-  NodeName[7] = 'G';
+  NodeName[1] = 'C';
+  NodeName[2] = 'a';
+  NodeName[3] = 'l';
+  NodeName[4] = 'e';
+  NodeName[5] = 'b';
+  NodeName[6] = 'B';
+  NodeName[7] = 'r';
 
   startMag();
   startAcc();
@@ -313,7 +454,7 @@ int main(void)
     	ReadSensor=0;
 
 	//*********get sensor data**********
-    	readMag();
+//    	readMag();
     	readAcc();
 
 	//*********process sensor data*********
@@ -321,7 +462,7 @@ int main(void)
     	COMP_Value.x++;
     	COMP_Value.y=120;
     	COMP_Value.Heading+=10;
-    	XPRINTF("**STEP INCREMENTS = %d**\r\n",(int)COMP_Value.x);
+//    	XPRINTF("**STEP INCREMENTS = %d**\r\n",(int)COMP_Value.x);
 
     }
 
@@ -331,6 +472,9 @@ int main(void)
 
     /* Motion Data */
     if(SendAccGyroMag) {
+
+
+
 		SendMotionData();
     	SendAccGyroMag=0;
     }

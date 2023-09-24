@@ -1,12 +1,134 @@
-10:37:20 **** Incremental Build of configuration Debug for project COMSYS704 ****
+19:32:31 **** Incremental Build of configuration Debug for project COMSYS704 ****
 make all 
+arm-none-eabi-gcc "/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c" -mcpu=cortex-m4 -std=c99 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L476xx -DUSE_STM32L4XX_NUCLEO -DSTM32_SENSORTILE -c -I../../Inc -I../../../../../../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../../../../../../Drivers/STM32L4xx_HAL_Driver/Inc -I../../../../../../Drivers/BSP/SensorTile -I../../../../../../Drivers/CMSIS/Include -I../../../../../../Drivers/BSP/Components/Common -I../../../../../../Middlewares/ST/BlueNRG-MS/includes -I../../../../../../Middlewares/ST/BlueNRG-MS/utils -I../../../../../../Middlewares/ST/BlueNRG-MS/hci/hci_tl_patterns/Basic -I../../../../../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I../../../../../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -Og -ffunction-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Application/User/main.d" -MT"Application/User/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mthumb -o "Application/User/main.o"
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c: In function 'startAcc':
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:256:17: warning: unused variable 'zero' [-Wunused-variable]
+  256 |         uint8_t zero = 0x00;
+      |                 ^~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:255:17: warning: unused variable 'seve' [-Wunused-variable]
+  255 |         uint8_t seve = 0x57;
+      |                 ^~~~
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c: In function 'readMag':
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:17: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                 ^~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~
+      |                                             |
+      |                                             uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:23: note: format string is defined here
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                      ~^
+      |                       |
+      |                       int
+      |                      %ld
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:17: warning: format '%d' expects argument of type 'int', but argument 4 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                 ^~~~~~~~~~~~~~~~~~             ~~~~~~~~~~~
+      |                                                         |
+      |                                                         uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:26: note: format string is defined here
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                         ~^
+      |                          |
+      |                          int
+      |                         %ld
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:17: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                 ^~~~~~~~~~~~~~~~~~                         ~~~~~~~~~~~
+      |                                                                     |
+      |                                                                     uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:321:29: note: format string is defined here
+  321 |         XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+      |                            ~^
+      |                             |
+      |                             int
+      |                            %ld
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c: In function 'readAcc':
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:25: warning: format '%d' expects argument of type 'int', but argument 3 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                         ^~~~~~~~~~~~~~~~~~ ~~~~~~~~~~~
+      |                                                     |
+      |                                                     uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:31: note: format string is defined here
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                              ~^
+      |                               |
+      |                               int
+      |                              %ld
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:25: warning: format '%d' expects argument of type 'int', but argument 4 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                         ^~~~~~~~~~~~~~~~~~             ~~~~~~~~~~~
+      |                                                                 |
+      |                                                                 uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:34: note: format string is defined here
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                                 ~^
+      |                                  |
+      |                                  int
+      |                                 %ld
+In file included from ../../Inc/main.h:27,
+                 from /home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:39:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:25: warning: format '%d' expects argument of type 'int', but argument 5 has type 'uint32_t' {aka 'long unsigned int'} [-Wformat=]
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                         ^~~~~~~~~~~~~~~~~~                         ~~~~~~~~~~~
+      |                                                                             |
+      |                                                                             uint32_t {aka long unsigned int}
+../../Inc/ALLMEMS1_config.h:126:52: note: in definition of macro 'XPRINTF'
+  126 |       TmpBytesToWrite = sprintf( TmpBufferToWrite, __VA_ARGS__);\
+      |                                                    ^~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:362:37: note: format string is defined here
+  362 |                 XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
+      |                                    ~^
+      |                                     |
+      |                                     int
+      |                                    %ld
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:337:17: warning: unused variable 'status' [-Wunused-variable]
+  337 |         uint8_t status = 5;
+      |                 ^~~~~~
+At top level:
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:991:13: warning: 'DeinitTimers' defined but not used [-Wunused-function]
+  991 | static void DeinitTimers(void)
+      |             ^~~~~~~~~~~~
+/home/caleb/Desktop/cs704/Part_2/COMSYS704/COMSYS704/Projects/STM32L476JG-SensorTile/Applications/ALLMEMS1/Src/main.c:305:13: warning: 'readMag' defined but not used [-Wunused-function]
+  305 | static void readMag() {
+      |             ^~~~~~~
+arm-none-eabi-g++ -o "STM32L476JG-SensorTile_ALLMEMS1.elf" @"objects.list"   -mcpu=cortex-m4 -T"../STM32L476RGTX.ld" -Wl,-Map="STM32L476JG-SensorTile_ALLMEMS1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+Finished building target: STM32L476JG-SensorTile_ALLMEMS1.elf
+ 
 arm-none-eabi-size   STM32L476JG-SensorTile_ALLMEMS1.elf 
    text	   data	    bss	    dec	    hex	filename
-  33048	    496	  22664	  56208	   db90	STM32L476JG-SensorTile_ALLMEMS1.elf
+  33520	    496	  22664	  56680	   dd68	STM32L476JG-SensorTile_ALLMEMS1.elf
 Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  STM32L476JG-SensorTile_ALLMEMS1.elf  > "STM32L476JG-SensorTile_ALLMEMS1.list"
+Finished building: STM32L476JG-SensorTile_ALLMEMS1.list
  
 arm-none-eabi-objcopy -O binary "STM32L476JG-SensorTile_ALLMEMS1.elf" "STM32L476JG-SensorTile_ALLMEMS1.bin"
  
 
-10:37:20 Build Finished. 0 errors, 0 warnings. (took 330ms)
+19:32:34 Build Finished. 0 errors, 11 warnings. (took 2s.71ms)
 
