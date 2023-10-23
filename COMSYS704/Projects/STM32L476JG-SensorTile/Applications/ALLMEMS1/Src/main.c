@@ -192,14 +192,64 @@ static void InitLSM() {
 
 }
 
+// NOTE: Naming conventions used in datasheet ARE NOT consistent with accelerometer.
+// Register macro names have been modified to be consistent.
+#define CFG_REG_A_M 0x60
+#define CFG_REG_B_M 0x61
+#define CFG_REG_C_M 0x62
+#define INT_CTRL_REG_M 0x63
+#define INT_SOURCE_REG_M 0x64
+#define INT_THS_L_REG_M 0x65
+#define INT_THS_H_REG_M 0x66
+#define STATUS_REG_M 0x67
+// Datasheet for LSM303AGR is inconsistent with naming
+// i.e. datasheet has OUTX_L_M instead of OUT_X_L_M
+// Renamed to be consistent
+#define OUT_X_L_M 0x68
+#define OUT_X_H_M 0x69
+#define OUT_Y_L_M 0x6A
+#define OUT_Y_H_M 0x6B
+#define OUT_Z_L_M 0x6C
+#define OUT_Z_H_M 0x6D
+
+// Hard-Iron (HI) compensation/calibration registers
+// X Axis HI
+#define OFFSET_X_REG_L_M 0x45 // LSB 8 bits
+#define OFFSET_X_REG_H_M 0x46 // MSB 8 bits
+// Y Axis HI
+#define OFFSET_Y_REG_L_M 0x47 // LSB 8 bits
+#define OFFSET_Y_REG_H_M 0x48 // MSB 8 bits
+// Z AXis HI
+#define OFFSET_Z_REG_L_M 0x49 // LSB 8 bits
+#define OFFSET_Z_REG_H_M 0x4A // MSB 8 bits
+
 
 static void startMag() {
 	//#CS704 - Write SPI commands to initiliase Magnetometer
-//	// How do I do this lol
-//	uint8_t inData[10];
-//	inData[0] = 0x01;
-//	BSP_LSM303AGR_ReadReg_Mag(0x4F,inData,1);
-//	XPRINTF("IAM Mag= %d,%d",inData[0],inData[1]);
+
+	uint8_t inData[10];
+	// Included here for possible mounting SensorTile onto a waist belt.
+	// Hard-Iron Calibration for all axes
+	inData[0] = 0x00; // Do not want HI calibration on X AXIS
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_X_REG_L_M, inData, 1);
+	inData[0] = 0x00;
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_X_REG_H_M, inData, 1);
+	inData[0] = 0x00; // Do not want HI calibration on Y AXIS
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_Y_REG_L_M, inData, 1);
+	inData[0] = 0x00;
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_Y_REG_H_M, inData, 1);
+	inData[0] = 0x00; // Do not want HI calibration on Z AXIS
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_Z_REG_L_M, inData, 1);
+	inData[0] = 0x00;
+	BSP_LSM303AGR_WriteReg_Mag(OFFSET_Z_REG_H_M, inData, 1);
+
+	// Following general-purpose start up sequence for magnetometer
+	inData[0] = 0x00;	// 10 Hz HR and continuous reading mode
+	BSP_LSM303AGR_WriteReg_Mag(CFG_REG_A_M, inData, 1);
+	inData[0] = 0x01;  // Enable low-pass filter
+	BSP_LSM303AGR_WriteReg_Mag(CFG_REG_B_M, inData, 1);
+	inData[0] = 0x01;  // Enable data-ready interrupt.
+	BSP_LSM303AGR_WriteReg_Mag(CFG_REG_C_M, inData, 1);
 
 }
 // Order in start up sequence
@@ -213,7 +263,6 @@ static void startMag() {
 #define INT1_THS_A 0x32 // 8
 #define INT1_DURATION_A 0x33 // 9
 #define INT1_CFG_A 0x30 // 10
-
 
 #define STATUS_REG_A 0x27
 
@@ -239,13 +288,13 @@ static void startAcc() {
 	// Writing defaults
 	uint8_t inData[10];
 	inData[0] = seve; // Enable XYZ Axis and ODR (Output Data Rate) set to 100 Hz
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 1 - Relevant for ODR and power-mode (ODR is dependent on power mode)
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG1_A, inData, 1); // 1 - Low-power disabled (bit 4 = 0)  - Relevant for ODR and power-mode (ODR is dependent on power mode)
 	inData[0] = zero; // Don't care about this for now.
 	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG2_A, inData, 1); // 2 - Relevant for Filters (High-Pass, data filter), and interrupts.
 	inData[0] = zero; // Don't care about this for now. -
 	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG3_A, inData, 1); // 3 - Relevant for FIFO and interrupts
-	inData[0] = 0x81; // Enable SPI and Block data update set to output new data when MSB and LSB regs are read.
-	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 4 - Relevant for Block data update, self-test, SPI enable,
+	inData[0] = 0x89; // Enable SPI and Block data update set to output new data when MSB and LSB regs are read.
+	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG4_A, inData, 1); // 4 - Normal mode (bit 4 = 1) - Relevant for Block data update, self-test, SPI enable,
 	inData[0] = zero; // Don't care about this for now.
 	BSP_LSM303AGR_WriteReg_Acc(CTRL_REG5_A, inData, 1); // 5 - Relevant for FIFO enable, rebooting, latch enable interrupts,
 	inData[0] = zero; // Don't care about this for now.
@@ -263,29 +312,54 @@ static void startAcc() {
 
 }
 
+
 static void readMag() {
 
 	//#CS704 - Read Magnetometer Data over SPI
 
-	//#CS704 - store sensor values into the variables below
+	uint8_t status = 0xFF; //
+	int16_t x ,y ,z;
 
-//	uint8_t mag_x;
+	BSP_LSM303AGR_ReadReg_Mag(STATUS_REG_M, &status, 1);
 
-//	BSP_LSM303AGR_ReadReg_Mag(0x01 ,&mag_data, 1);
+	// Check if new data is ready
+	if ((status & (1 << 4)) != 0) {
+		uint8_t x_lsb = 0;
+		uint8_t x_msb = 0;
+		BSP_LSM303AGR_ReadReg_Mag(OUT_X_L_M, &x_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Mag(OUT_X_H_M, &x_msb, 1);
+		uint8_t y_lsb = 0;
+		uint8_t y_msb = 0;
+		BSP_LSM303AGR_ReadReg_Mag(OUT_Y_L_M, &y_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Mag(OUT_Y_H_M, &y_msb, 1);
+		uint8_t z_lsb = 0;
+		uint8_t z_msb = 0;
+		BSP_LSM303AGR_ReadReg_Mag(OUT_Z_L_M, &z_lsb, 1);
+		BSP_LSM303AGR_ReadReg_Mag(OUT_Z_H_M, &z_msb, 1);
 
+		// Concatenate MSB and LSB values from each register
+		x = (x_msb << 8) | x_lsb;
+		y = (y_msb << 8) | y_lsb;
+		z = (z_msb << 8) | z_lsb;
 
+		// Options:
+		// 1 - Multiply by magnetic sensitivity (1.5) * 10 to store in int32_t appropriately
+		// 2 - Multiply by magnetic sensitivity (1.5) and accept the lose in accuracy (truncate after decimal place).
+		MAG_Value.x = x;// * 1.5; // 2 is fine for now.
+		MAG_Value.y = y;// * 1.5;
+		MAG_Value.z = z;// * 1.5;
 
+		XPRINTF("MAG: X=%d Y=%d Z=%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+//		XPRINTF("MSB MAG:   X=%d,   Y=%d,   Z=%d\r\n", x_msb, y_msb, z_msb);
+//		XPRINTF("LSB MAG:   X=%d,   Y=%d,   Z=%d\r\n", x_lsb, y_lsb, z_lsb);
 
-	MAG_Value.x=100;
-	MAG_Value.y=200;
-	MAG_Value.z=1000;
-	XPRINTF("MAG=%d,%d,%d\r\n",MAG_Value.x,MAG_Value.y,MAG_Value.z);
+	}
 }
 
 // Accelerometer Register Macros
 #define OUT_X_L_A 0x28 // Register that holds the 8 LSB
 #define OUT_X_H_A 0x29 // Register that holds the 8 MSB for X axis
-//OUT_X_H_A & OUT_X_L_A
+
 #define OUT_Y_L_A 0x2A
 #define OUT_Y_H_A 0x2B
 
@@ -295,13 +369,13 @@ static void readMag() {
 static void readAcc() {
 
 	//#CS704 - Read Accelerometer Data over SPI
-	uint8_t status = 5;
+	uint8_t status = 0xFF; //
+	int16_t x, y, z;
 
+	BSP_LSM303AGR_ReadReg_Acc(STATUS_REG_A, &status, 1);
 
-//	BSP_LSM303AGR_ReadReg_Acc(STATUS_REG_A, &status, 1);
-
-
-//	if ((status & (1 << 2)) != 0) {
+	// Check if new data is ready
+	if ((status & (1 << 4)) != 0) {
 		uint8_t x_lsb = 0;
 		uint8_t x_msb = 0;
 		BSP_LSM303AGR_ReadReg_Acc(OUT_X_L_A, &x_lsb, 1);
@@ -315,17 +389,85 @@ static void readAcc() {
 		BSP_LSM303AGR_ReadReg_Acc(OUT_Z_L_A, &z_lsb, 1);
 		BSP_LSM303AGR_ReadReg_Acc(OUT_Z_H_A, &z_msb, 1);
 
-		//#CS704 - store sensor values into the variables below
-		ACC_Value.x = (x_msb << 8) | x_lsb;
-		ACC_Value.y = (y_msb << 8) | y_lsb;
-		ACC_Value.z = (z_msb << 8) | z_lsb;
+		x = (x_msb << 8) | x_lsb;
+		y = (y_msb << 8) | y_lsb;
+		z = (z_msb << 8) | z_lsb;
 
-		XPRINTF("ACC=%d,%d,%d\r\n",ACC_Value.x,ACC_Value.y,ACC_Value.z);
-		XPRINTF("LSB ACC=%d,%d,%d\r\n", x_lsb, y_lsb, z_lsb);
-		XPRINTF("MSB ACC=%d,%d,%d\r\n", x_msb, y_msb, z_msb);
+		// Shift right based on ACC resolution, as LSB are LEFT-justified.
+		// Currently in normal power mode (resolution of 12 bits)
+		x = x >> 4;
+		y = y >> 4;
+		z = z >> 4;
 
-//	}
+		ACC_Value.x = x;
+		ACC_Value.y = y;
+		ACC_Value.z = z;
+
+		// Debugging via XPRINT to port.
+		XPRINTF("ACC: X=%d Y=%d Z=%d\r\n",ACC_Value.x, ACC_Value.y, ACC_Value.z);
+//		XPRINTF("MSB ACC: X=%d, Y=%d, Z=%d\r\n", x_msb, y_msb, z_msb);
+//		XPRINTF("LSB ACC: X=%d, Y=%d, Z=%d\r\n", x_lsb, y_lsb, z_lsb);
+	}
 }
+//
+//#ifdef M_PI
+#define M_PI (3.14159265358979323846)
+//#end
+#define ACC_SENS 7.82 // Accelerometer Sensitivity based on power mode (check datasheet)
+
+// Implementation based on "DT0058 Computing tilt measurement and tilt-compensated eCompass"
+// Available here: https://www.st.com/en/mems-and-sensors/lsm303agr.html#documentation
+
+// Function to calculate the heading from accelerometer and magnetometer data
+float calculate_heading(int32_t acc_x, int32_t acc_y, int32_t acc_z,
+                        int32_t mag_x, int32_t mag_y, int32_t mag_z) {
+    // Convert accelerometer data to float and normalize
+    float Gx = (float)acc_x / ACC_SENS;
+    float Gy = (float)acc_y / ACC_SENS;
+    float Gz = (float)acc_z / ACC_SENS;
+
+    // Convert magnetometer data to float
+    float Bx = (float)mag_x;
+    float By = (float)mag_y;
+    float Bz = (float)mag_z;
+
+    // Step 1: Computation of Phi (roll angle)
+    float Phi = atan2(Gy, Gz);
+
+    // Step 2: Computation of Theta (pitch angle)
+    float Gz2 = Gy * sin(Phi) + Gz * cos(Phi);
+    float Theta = atan2(-Gx, Gz2);
+
+    // Step 3: Computation of Psi (yaw angle, also known as heading)
+    float By2 = Bz * sin(Phi) - By * cos(Phi);
+    float Bz2 = By * sin(Phi) + Bz * cos(Phi);
+    float Bx3 = Bx * cos(Theta) + Bz2 * sin(Theta);
+    float Psi = atan2(By2, Bx3);
+
+    // Convert Psi from radians to degrees
+    float heading = Psi * (180.0 / M_PI);
+    heading += 180;
+    // Normalize the heading to be in the range of 0 to 360
+    if (heading < 0) {
+        heading += 360.0;
+    }
+
+    return heading;
+}
+
+//float calculate_heading(int32_t x, int32_t y){
+//
+//	float heading = (float) atan2(y,x) * (180 / M_PI);
+//	heading += 180;
+//
+//	if (heading < 0){
+//		heading += 360;
+//	} else if (heading > 360){
+//		heading -= 360;
+//	}
+//
+//	return heading;
+//}
 
 /**
   * @brief  Main program
@@ -366,13 +508,13 @@ int main(void)
   //***************************************************
 
   //#CS704 - use this to set BLE Device Name
-  NodeName[1] = 'C';
-  NodeName[2] = 'a';
-  NodeName[3] = 'l';
-  NodeName[4] = 'e';
-  NodeName[5] = 'b';
-  NodeName[6] = 'B';
-  NodeName[7] = 'r';
+  NodeName[1] = 'c';
+  NodeName[2] = 'b';
+  NodeName[3] = 'r';
+  NodeName[4] = 'u';
+  NodeName[5] = '2';
+  NodeName[6] = '4';
+  NodeName[7] = '1';
 
   startMag();
   startAcc();
@@ -417,14 +559,23 @@ int main(void)
     	ReadSensor=0;
 
 	//*********get sensor data**********
-//    	readMag();
+    	readMag();
     	readAcc();
 
 	//*********process sensor data*********
 
-    	COMP_Value.x++;
-    	COMP_Value.y=120;
-    	COMP_Value.Heading+=10;
+
+
+	  	float heading = calculate_heading(ACC_Value.x, ACC_Value.y, ACC_Value.z,
+	  									  MAG_Value.x, MAG_Value.y, MAG_Value.z);
+
+//    	float heading = calculate_heading(MAG_Value.x, MAG_Value.y);
+
+	  	XPRINTF("HEADING = %.2f \r\n", heading);
+
+//    	COMP_Value.x++;
+//    	COMP_Value.y=120;
+    	COMP_Value.Heading = (int16_t) heading;
 //    	XPRINTF("**STEP INCREMENTS = %d**\r\n",(int)COMP_Value.x);
 
     }
@@ -435,8 +586,6 @@ int main(void)
 
     /* Motion Data */
     if(SendAccGyroMag) {
-
-
 
 		SendMotionData();
     	SendAccGyroMag=0;
